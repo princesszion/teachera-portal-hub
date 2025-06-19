@@ -1,5 +1,6 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -23,11 +24,26 @@ import {
   MapPin,
   Clock
 } from "lucide-react";
+import { opportunityService } from "@/services/opportunityService";
+import { Opportunity } from "@/types/api";
 
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
 
-  const opportunities = [
+  // Fetch opportunities from Django backend
+  const { data: opportunitiesData, isLoading, error } = useQuery({
+    queryKey: ['opportunities', selectedCategory],
+    queryFn: () => {
+      if (selectedCategory === "all") {
+        return opportunityService.getRecentOpportunities(12);
+      } else {
+        return opportunityService.getOpportunitiesByCategory(selectedCategory);
+      }
+    },
+  });
+
+  // Fallback mock data for development (when backend is not available)
+  const mockOpportunities: Opportunity[] = [
     {
       id: 1,
       title: "Senior Mathematics Teacher",
@@ -37,7 +53,9 @@ const Index = () => {
       location: "London, UK",
       salary: "$65,000 - $80,000",
       posted: "2 days ago",
-      urgent: true
+      urgent: true,
+      created_at: "2024-01-15T10:00:00Z",
+      updated_at: "2024-01-15T10:00:00Z"
     },
     {
       id: 2,
@@ -48,7 +66,9 @@ const Index = () => {
       location: "Cambridge, UK",
       amount: "$25,000/year",
       posted: "1 week ago",
-      urgent: false
+      urgent: false,
+      created_at: "2024-01-10T10:00:00Z",
+      updated_at: "2024-01-10T10:00:00Z"
     },
     {
       id: 3,
@@ -59,7 +79,9 @@ const Index = () => {
       location: "Remote",
       salary: "Unpaid",
       posted: "3 days ago",
-      urgent: false
+      urgent: false,
+      created_at: "2024-01-12T10:00:00Z",
+      updated_at: "2024-01-12T10:00:00Z"
     },
     {
       id: 4,
@@ -70,7 +92,9 @@ const Index = () => {
       location: "Online",
       amount: "Free",
       posted: "5 days ago",
-      urgent: false
+      urgent: false,
+      created_at: "2024-01-08T10:00:00Z",
+      updated_at: "2024-01-08T10:00:00Z"
     }
   ];
 
@@ -85,9 +109,15 @@ const Index = () => {
   const jobSubcategories = ["Full-time Jobs", "Internships", "Volunteering"];
   const fellowshipSubcategories = ["Undergraduate", "Master's", "PhD", "Post-doctoral", "Online Courses"];
 
+  // Use API data if available, otherwise use mock data
+  const opportunities = opportunitiesData?.results || mockOpportunities;
   const filteredOpportunities = selectedCategory === "all" 
     ? opportunities 
     : opportunities.filter(opp => opp.category === selectedCategory);
+
+  console.log('Current opportunities:', opportunities);
+  console.log('Loading state:', isLoading);
+  console.log('Error state:', error);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
@@ -96,7 +126,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center">
                 <GraduationCap className="h-6 w-6 text-white" />
               </div>
               <div>
@@ -105,12 +135,12 @@ const Index = () => {
               </div>
             </div>
             <nav className="hidden md:flex space-x-8">
-              <a href="#opportunities" className="text-gray-700 hover:text-blue-600 transition-colors">Opportunities</a>
-              <a href="#resources" className="text-gray-700 hover:text-blue-600 transition-colors">Resources</a>
-              <a href="#community" className="text-gray-700 hover:text-blue-600 transition-colors">Community</a>
-              <a href="#awards" className="text-gray-700 hover:text-blue-600 transition-colors">Awards</a>
+              <a href="#opportunities" className="text-gray-700 hover:text-primary transition-colors">Opportunities</a>
+              <a href="#resources" className="text-gray-700 hover:text-primary transition-colors">Resources</a>
+              <a href="#community" className="text-gray-700 hover:text-primary transition-colors">Community</a>
+              <a href="#awards" className="text-gray-700 hover:text-primary transition-colors">Awards</a>
             </nav>
-            <Button className="bg-blue-600 hover:bg-blue-700">Join TeachEra</Button>
+            <Button className="bg-primary hover:bg-primary/90">Join TeachEra</Button>
           </div>
         </div>
       </header>
@@ -120,7 +150,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto text-center">
           <h2 className="text-5xl font-bold text-gray-900 mb-6">
             Empowering Educators,{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80">
               Transforming Lives
             </span>
           </h2>
@@ -130,10 +160,10 @@ const Index = () => {
             tailored for educators worldwide.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+            <Button size="lg" className="bg-primary hover:bg-primary/90">
               Explore Opportunities
             </Button>
-            <Button size="lg" variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50">
+            <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/10">
               Join Our Community
             </Button>
           </div>
@@ -145,7 +175,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600 mb-2">2,500+</div>
+              <div className="text-3xl font-bold text-primary mb-2">2,500+</div>
               <div className="text-gray-600">Active Opportunities</div>
             </div>
             <div className="text-center">
@@ -157,7 +187,7 @@ const Index = () => {
               <div className="text-gray-600">Countries Served</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-orange-600 mb-2">98%</div>
+              <div className="text-3xl font-bold text-yellow mb-2">98%</div>
               <div className="text-gray-600">Success Rate</div>
             </div>
           </div>
@@ -170,6 +200,8 @@ const Index = () => {
           <div className="text-center mb-12">
             <h3 className="text-3xl font-bold text-gray-900 mb-4">Latest on TeachEra</h3>
             <p className="text-lg text-gray-600">Discover the newest opportunities posted by institutions worldwide</p>
+            {isLoading && <p className="text-sm text-gray-500 mt-2">Loading opportunities...</p>}
+            {error && <p className="text-sm text-red-500 mt-2">Using local data (backend connection pending)</p>}
           </div>
 
           {/* Category Filter */}
@@ -181,7 +213,11 @@ const Index = () => {
                   key={category.id}
                   variant={selectedCategory === category.id ? "default" : "outline"}
                   onClick={() => setSelectedCategory(category.id)}
-                  className="flex items-center gap-2"
+                  className={`flex items-center gap-2 ${
+                    selectedCategory === category.id 
+                      ? "bg-primary hover:bg-primary/90" 
+                      : "border-primary/20 text-primary hover:bg-primary/10"
+                  }`}
                 >
                   <Icon className="h-4 w-4" />
                   {category.name}
@@ -224,7 +260,7 @@ const Index = () => {
                       <Badge variant="destructive" className="text-xs">Urgent</Badge>
                     )}
                   </div>
-                  <CardDescription className="text-blue-600 font-medium">
+                  <CardDescription className="text-primary font-medium">
                     {opportunity.organization}
                   </CardDescription>
                 </CardHeader>
@@ -255,7 +291,7 @@ const Index = () => {
           </div>
 
           <div className="text-center">
-            <Button size="lg" variant="outline">
+            <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/10">
               See More Opportunities <ChevronRight className="h-4 w-4 ml-2" />
             </Button>
           </div>
@@ -364,8 +400,8 @@ const Index = () => {
             <Card className="bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200">
               <CardHeader>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-                    <Award className="h-6 w-6 text-yellow-600" />
+                  <div className="w-12 h-12 bg-yellow rounded-full flex items-center justify-center">
+                    <Award className="h-6 w-6 text-yellow-foreground" />
                   </div>
                   <div>
                     <CardTitle className="text-yellow-800">Teacher of the Month</CardTitle>
@@ -381,7 +417,7 @@ const Index = () => {
                     <div className="text-sm text-gray-600">Mathematics Teacher, London</div>
                   </div>
                 </div>
-                <Button className="w-full bg-yellow-600 hover:bg-yellow-700">Nominate a Teacher</Button>
+                <Button className="w-full bg-yellow hover:bg-yellow/90 text-yellow-foreground">Nominate a Teacher</Button>
               </CardContent>
             </Card>
 
@@ -476,7 +512,7 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                   <GraduationCap className="h-5 w-5 text-white" />
                 </div>
                 <div className="text-xl font-bold">TeachEra</div>
