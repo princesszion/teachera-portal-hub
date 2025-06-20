@@ -1,6 +1,6 @@
 
 import { apiClient } from '@/lib/api';
-import { Opportunity, ApiResponse, PaginationParams } from '@/types/api';
+import { Opportunity, ApiResponse, PaginationParams, CreateOpportunity } from '@/types/api';
 
 export const opportunityService = {
   // Get all opportunities with pagination and filtering
@@ -22,6 +22,21 @@ export const opportunityService = {
     return apiClient.get<Opportunity>(`/opportunities/${id}/`);
   },
 
+  // Create a new opportunity
+  createOpportunity: async (data: CreateOpportunity): Promise<Opportunity> => {
+    return apiClient.post<Opportunity>('/opportunities/', data);
+  },
+
+  // Update an opportunity
+  updateOpportunity: async (id: number, data: Partial<CreateOpportunity>): Promise<Opportunity> => {
+    return apiClient.put<Opportunity>(`/opportunities/${id}/`, data);
+  },
+
+  // Delete an opportunity
+  deleteOpportunity: async (id: number): Promise<void> => {
+    return apiClient.delete<void>(`/opportunities/${id}/`);
+  },
+
   // Get recent opportunities (latest posted)
   getRecentOpportunities: async (limit: number = 10): Promise<ApiResponse<Opportunity>> => {
     return apiClient.get<ApiResponse<Opportunity>>(`/opportunities/?ordering=-created_at&page_size=${limit}`);
@@ -35,5 +50,10 @@ export const opportunityService = {
   // Search opportunities
   searchOpportunities: async (query: string): Promise<ApiResponse<Opportunity>> => {
     return apiClient.get<ApiResponse<Opportunity>>(`/opportunities/?search=${encodeURIComponent(query)}`);
+  },
+
+  // Get urgent opportunities
+  getUrgentOpportunities: async (): Promise<ApiResponse<Opportunity>> => {
+    return apiClient.get<ApiResponse<Opportunity>>('/opportunities/?urgent=true');
   }
 };

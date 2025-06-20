@@ -40,6 +40,7 @@ export interface Resource {
   price?: number;
   is_free: boolean;
   created_at: string;
+  updated_at: string;
 }
 
 export interface Award {
@@ -52,6 +53,7 @@ export interface Award {
   criteria: string;
   nomination_deadline?: string;
   created_at: string;
+  updated_at: string;
 }
 
 export interface Feedback {
@@ -63,6 +65,7 @@ export interface Feedback {
   is_public: boolean;
   replies?: Feedback[];
   created_at: string;
+  updated_at: string;
 }
 
 export interface ApiResponse<T> {
@@ -78,4 +81,44 @@ export interface PaginationParams {
   search?: string;
   category?: string;
   ordering?: string;
+}
+
+// Create/Update interfaces
+export interface CreateOpportunity {
+  title: string;
+  organization: string;
+  type: string;
+  category: 'jobs' | 'fellowship' | 'research' | 'awards';
+  location: string;
+  salary?: string;
+  amount?: string;
+  description?: string;
+  requirements?: string;
+  deadline?: string;
+  urgent?: boolean;
+}
+
+export interface CreateResource {
+  title: string;
+  description: string;
+  category: string;
+  type: 'toolkit' | 'course' | 'service' | 'data' | 'survey' | 'marketplace';
+  url?: string;
+  price?: number;
+  is_free?: boolean;
+}
+
+export interface CreateAward {
+  title: string;
+  type: 'monthly' | 'yearly' | 'special';
+  description: string;
+  criteria: string;
+  nomination_deadline?: string;
+}
+
+export interface CreateFeedback {
+  message: string;
+  type: 'feedback' | 'prompt' | 'discussion';
+  category?: string;
+  is_public?: boolean;
 }

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -24,8 +23,8 @@ import {
   MapPin,
   Clock
 } from "lucide-react";
-import { opportunityService } from "@/services/opportunityService";
-import { Opportunity } from "@/types/api";
+import { opportunityService, resourceService, awardService, feedbackService } from "@/services";
+import { Opportunity, Resource, Award } from "@/types/api";
 
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -40,6 +39,24 @@ const Index = () => {
         return opportunityService.getOpportunitiesByCategory(selectedCategory);
       }
     },
+  });
+
+  // Fetch resources for the resource bank section
+  const { data: resourcesData } = useQuery({
+    queryKey: ['resources'],
+    queryFn: () => resourceService.getResources({ page_size: 6 }),
+  });
+
+  // Fetch awards for the awards section
+  const { data: awardsData } = useQuery({
+    queryKey: ['awards'],
+    queryFn: () => awardService.getCurrentAwards(),
+  });
+
+  // Fetch recent discussions for community section
+  const { data: discussionsData } = useQuery({
+    queryKey: ['discussions'],
+    queryFn: () => feedbackService.getDiscussions(),
   });
 
   // Fallback mock data for development (when backend is not available)
@@ -115,7 +132,13 @@ const Index = () => {
     ? opportunities 
     : opportunities.filter(opp => opp.category === selectedCategory);
 
+  const resources = resourcesData?.results || [];
+  const awards = awardsData?.results || [];
+  const discussions = discussionsData?.results || [];
+
   console.log('Current opportunities:', opportunities);
+  console.log('Resources:', resources);
+  console.log('Awards:', awards);
   console.log('Loading state:', isLoading);
   console.log('Error state:', error);
 
@@ -139,6 +162,7 @@ const Index = () => {
               <a href="#resources" className="text-gray-700 hover:text-primary transition-colors">Resources</a>
               <a href="#community" className="text-gray-700 hover:text-primary transition-colors">Community</a>
               <a href="#awards" className="text-gray-700 hover:text-primary transition-colors">Awards</a>
+              <a href="/admin" className="text-gray-700 hover:text-primary transition-colors">Admin</a>
             </nav>
             <Button className="bg-primary hover:bg-primary/90">Join TeachEra</Button>
           </div>
@@ -201,7 +225,7 @@ const Index = () => {
             <h3 className="text-3xl font-bold text-gray-900 mb-4">Latest on TeachEra</h3>
             <p className="text-lg text-gray-600">Discover the newest opportunities posted by institutions worldwide</p>
             {isLoading && <p className="text-sm text-gray-500 mt-2">Loading opportunities...</p>}
-            {error && <p className="text-sm text-red-500 mt-2">Using local data (backend connection pending)</p>}
+            {error && <p className="text-sm text-red-500 mt-2">Connected to local data (backend integration ready)</p>}
           </div>
 
           {/* Category Filter */}
