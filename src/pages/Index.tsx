@@ -33,7 +33,7 @@ let awardService: any = null;
 let feedbackService: any = null;
 
 try {
-  const services = await import("@/services");
+  const services = require("@/services");
   opportunityService = services.opportunityService;
   resourceService = services.resourceService;
   awardService = services.awardService;
