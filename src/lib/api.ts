@@ -1,18 +1,23 @@
-// API configuration and base utilities for Django backend integration
+
+// API client configuration for Django backend integration
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
 
-// API client configuration
+interface ApiResponse<T> {
+  results: T[];
+  count: number;
+  next?: string;
+  previous?: string;
+}
+
 class ApiClient {
   private baseURL: string;
 
-  constructor(baseURL: string = API_BASE_URL) {
+  constructor(baseURL: string) {
     this.baseURL = baseURL;
   }
 
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<T> {
+  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
     
     const config: RequestInit = {
@@ -23,30 +28,24 @@ class ApiClient {
       ...options,
     };
 
-    console.log(`API Request: ${config.method || 'GET'} ${url}`);
-
     try {
       const response = await fetch(url, config);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      const data = await response.json();
-      console.log('API Response:', data);
-      return data;
+      
+      return await response.json();
     } catch (error) {
-      console.error('API Error:', error);
+      console.error(`API request failed for ${endpoint}:`, error);
       throw error;
     }
   }
 
-  // GET request
   async get<T>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint, { method: 'GET' });
   }
 
-  // POST request
   async post<T>(endpoint: string, data: any): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'POST',
@@ -54,7 +53,6 @@ class ApiClient {
     });
   }
 
-  // PUT request
   async put<T>(endpoint: string, data: any): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'PUT',
@@ -62,10 +60,17 @@ class ApiClient {
     });
   }
 
-  // DELETE request
+  async patch<T>(endpoint: string, data: any): Promise<T> {
+    return this.request<T>(endpoint, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
   async delete<T>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint, { method: 'DELETE' });
   }
 }
 
-export const apiClient = new ApiClient();
+export const apiClient = new ApiClient(API_BASE_URL);
+export type { ApiResponse };

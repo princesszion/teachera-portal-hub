@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,41 +24,26 @@ import {
   MapPin,
   Clock
 } from "lucide-react";
-import { opportunityService, resourceService, awardService, feedbackService } from "@/services";
 import { Opportunity, Resource, Award } from "@/types/api";
+
+// Import services with error handling
+let opportunityService: any = null;
+let resourceService: any = null;
+let awardService: any = null;
+let feedbackService: any = null;
+
+try {
+  const services = await import("@/services");
+  opportunityService = services.opportunityService;
+  resourceService = services.resourceService;
+  awardService = services.awardService;
+  feedbackService = services.feedbackService;
+} catch (error) {
+  console.warn("Services not available, using mock data:", error);
+}
 
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
-
-  // Fetch opportunities from Django backend
-  const { data: opportunitiesData, isLoading, error } = useQuery({
-    queryKey: ['opportunities', selectedCategory],
-    queryFn: () => {
-      if (selectedCategory === "all") {
-        return opportunityService.getRecentOpportunities(12);
-      } else {
-        return opportunityService.getOpportunitiesByCategory(selectedCategory);
-      }
-    },
-  });
-
-  // Fetch resources for the resource bank section
-  const { data: resourcesData } = useQuery({
-    queryKey: ['resources'],
-    queryFn: () => resourceService.getResources({ page_size: 6 }),
-  });
-
-  // Fetch awards for the awards section
-  const { data: awardsData } = useQuery({
-    queryKey: ['awards'],
-    queryFn: () => awardService.getCurrentAwards(),
-  });
-
-  // Fetch recent discussions for community section
-  const { data: discussionsData } = useQuery({
-    queryKey: ['discussions'],
-    queryFn: () => feedbackService.getDiscussions(),
-  });
 
   // Fallback mock data for development (when backend is not available)
   const mockOpportunities: Opportunity[] = [
@@ -114,6 +100,74 @@ const Index = () => {
       updated_at: "2024-01-08T10:00:00Z"
     }
   ];
+
+  // Fetch opportunities from Django backend with error handling
+  const { data: opportunitiesData, isLoading, error } = useQuery({
+    queryKey: ['opportunities', selectedCategory],
+    queryFn: async () => {
+      if (!opportunityService) {
+        console.log("Using mock data - backend services not available");
+        return { results: mockOpportunities };
+      }
+      
+      try {
+        if (selectedCategory === "all") {
+          return await opportunityService.getRecentOpportunities(12);
+        } else {
+          return await opportunityService.getOpportunitiesByCategory(selectedCategory);
+        }
+      } catch (error) {
+        console.error("API call failed, using mock data:", error);
+        return { results: mockOpportunities };
+      }
+    },
+    retry: false,
+  });
+
+  // Fetch resources with error handling
+  const { data: resourcesData } = useQuery({
+    queryKey: ['resources'],
+    queryFn: async () => {
+      if (!resourceService) return { results: [] };
+      try {
+        return await resourceService.getResources({ page_size: 6 });
+      } catch (error) {
+        console.error("Resource fetch failed:", error);
+        return { results: [] };
+      }
+    },
+    retry: false,
+  });
+
+  // Fetch awards with error handling
+  const { data: awardsData } = useQuery({
+    queryKey: ['awards'],
+    queryFn: async () => {
+      if (!awardService) return { results: [] };
+      try {
+        return await awardService.getCurrentAwards();
+      } catch (error) {
+        console.error("Awards fetch failed:", error);
+        return { results: [] };
+      }
+    },
+    retry: false,
+  });
+
+  // Fetch discussions with error handling
+  const { data: discussionsData } = useQuery({
+    queryKey: ['discussions'],
+    queryFn: async () => {
+      if (!feedbackService) return { results: [] };
+      try {
+        return await feedbackService.getDiscussions();
+      } catch (error) {
+        console.error("Discussions fetch failed:", error);
+        return { results: [] };
+      }
+    },
+    retry: false,
+  });
 
   const categories = [
     { id: "all", name: "All Opportunities", icon: Globe },
@@ -225,7 +279,7 @@ const Index = () => {
             <h3 className="text-3xl font-bold text-gray-900 mb-4">Latest on TeachEra</h3>
             <p className="text-lg text-gray-600">Discover the newest opportunities posted by institutions worldwide</p>
             {isLoading && <p className="text-sm text-gray-500 mt-2">Loading opportunities...</p>}
-            {error && <p className="text-sm text-red-500 mt-2">Connected to local data (backend integration ready)</p>}
+            {error && <p className="text-sm text-red-500 mt-2">Using demo data (backend ready for connection)</p>}
           </div>
 
           {/* Category Filter */}
