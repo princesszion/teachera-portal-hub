@@ -9,7 +9,7 @@ import {
   BookOpen, 
   Briefcase, 
   GraduationCap, 
-  Award, 
+  Award as AwardIcon, 
   Users, 
   Search,
   ChevronRight,
@@ -120,7 +120,7 @@ const Index = () => {
     { id: "jobs", name: "Jobs", icon: Briefcase },
     { id: "fellowship", name: "Fellowships & Training", icon: GraduationCap },
     { id: "research", name: "Research", icon: BookOpen },
-    { id: "awards", name: "Awards & Recognition", icon: Award }
+    { id: "awards", name: "Awards & Recognition", icon: AwardIcon }
   ];
 
   const jobSubcategories = ["Full-time Jobs", "Internships", "Volunteering"];
@@ -425,7 +425,7 @@ const Index = () => {
               <CardHeader>
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 bg-yellow rounded-full flex items-center justify-center">
-                    <Award className="h-6 w-6 text-yellow-foreground" />
+                    <AwardIcon className="h-6 w-6 text-yellow-foreground" />
                   </div>
                   <div>
                     <CardTitle className="text-yellow-800">Teacher of the Month</CardTitle>
