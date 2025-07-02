@@ -13,47 +13,47 @@ export const opportunityService = {
     if (params?.category) searchParams.append('category', params.category);
     if (params?.ordering) searchParams.append('ordering', params.ordering);
 
-    const endpoint = `/opportunities/${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+    const endpoint = `/opportunities/opportunities/${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
     return apiClient.get<ApiResponse<Opportunity>>(endpoint);
   },
 
   // Get a single opportunity by ID
   getOpportunity: async (id: number): Promise<Opportunity> => {
-    return apiClient.get<Opportunity>(`/opportunities/${id}/`);
+    return apiClient.get<Opportunity>(`/opportunities/opportunities/${id}/`);
   },
 
   // Create a new opportunity
   createOpportunity: async (data: CreateOpportunity): Promise<Opportunity> => {
-    return apiClient.post<Opportunity>('/opportunities/', data);
+    return apiClient.post<Opportunity>('/opportunities/opportunities/', data);
   },
 
   // Update an opportunity
   updateOpportunity: async (id: number, data: Partial<CreateOpportunity>): Promise<Opportunity> => {
-    return apiClient.put<Opportunity>(`/opportunities/${id}/`, data);
+    return apiClient.put<Opportunity>(`/opportunities/opportunities/${id}/`, data);
   },
 
   // Delete an opportunity
   deleteOpportunity: async (id: number): Promise<void> => {
-    return apiClient.delete<void>(`/opportunities/${id}/`);
+    return apiClient.delete<void>(`/opportunities/opportunities/${id}/`);
   },
 
   // Get recent opportunities (latest posted)
   getRecentOpportunities: async (limit: number = 10): Promise<ApiResponse<Opportunity>> => {
-    return apiClient.get<ApiResponse<Opportunity>>(`/opportunities/?ordering=-created_at&page_size=${limit}`);
+    return apiClient.get<ApiResponse<Opportunity>>(`/opportunities/opportunities/?ordering=-created_at&page_size=${limit}`);
   },
 
   // Get opportunities by category
   getOpportunitiesByCategory: async (category: string): Promise<ApiResponse<Opportunity>> => {
-    return apiClient.get<ApiResponse<Opportunity>>(`/opportunities/?category=${category}`);
+    return apiClient.get<ApiResponse<Opportunity>>(`/opportunities/opportunities/?category=${category}`);
   },
 
   // Search opportunities
   searchOpportunities: async (query: string): Promise<ApiResponse<Opportunity>> => {
-    return apiClient.get<ApiResponse<Opportunity>>(`/opportunities/?search=${encodeURIComponent(query)}`);
+    return apiClient.get<ApiResponse<Opportunity>>(`/opportunities/opportunities/?search=${encodeURIComponent(query)}`);
   },
 
   // Get urgent opportunities
   getUrgentOpportunities: async (): Promise<ApiResponse<Opportunity>> => {
-    return apiClient.get<ApiResponse<Opportunity>>('/opportunities/?urgent=true');
+    return apiClient.get<ApiResponse<Opportunity>>('/opportunities/opportunities/?urgent=true');
   }
 };
