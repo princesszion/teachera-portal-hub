@@ -1,7 +1,7 @@
 
 // API client configuration for Django backend integration
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/';
 
 interface ApiResponse<T> {
   results: T[];
@@ -18,7 +18,8 @@ class ApiClient {
   }
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    const url = `${this.baseURL}${endpoint}`;
+    const url = `${this.baseURL.replace(/\/$/, '')}/${endpoint.replace(/^\//, '')}`;
+
     
     const config: RequestInit = {
       headers: {

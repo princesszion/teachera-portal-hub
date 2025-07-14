@@ -3,97 +3,59 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Opportunity } from "@/types/api";
 
-// Import services with error handling
-let opportunityService: any = null;
-let resourceService: any = null;
-let awardService: any = null;
-let feedbackService: any = null;
+import { opportunityService } from "@/services/opportunityService";
+import { resourceService } from "@/services/resourceService";
+import { awardService } from "@/services/awardService";
+import { feedbackService } from "@/services/feedbackService";
 
-try {
-  const services = require("@/services");
-  opportunityService = services.opportunityService;
-  resourceService = services.resourceService;
-  awardService = services.awardService;
-  feedbackService = services.feedbackService;
-} catch (error) {
-  console.warn("Services not available, using mock data:", error);
+
+function formatPostedDate(dateStr: string) {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) return "Today";
+  if (diffDays === 1) return "1 day ago";
+  return `${diffDays} days ago`;
 }
-
-// Fallback mock data for development (when backend is not available)
-const mockOpportunities: Opportunity[] = [
-  {
-    id: 1,
-    title: "Senior Mathematics Teacher",
-    organization: "International School of Excellence",
-    type: "Full-time",
-    category: "jobs",
-    location: "London, UK",
-    salary: "$65,000 - $80,000",
-    posted: "2 days ago",
-    urgent: true,
-    created_at: "2024-01-15T10:00:00Z",
-    updated_at: "2024-01-15T10:00:00Z"
-  },
-  {
-    id: 2,
-    title: "PhD Scholarship in Education Technology",
-    organization: "Cambridge University",
-    type: "PhD",
-    category: "fellowship",
-    location: "Cambridge, UK",
-    amount: "$25,000/year",
-    posted: "1 week ago",
-    urgent: false,
-    created_at: "2024-01-10T10:00:00Z",
-    updated_at: "2024-01-10T10:00:00Z"
-  },
-  {
-    id: 3,
-    title: "Teaching Assistant Program",
-    organization: "UNESCO Education Initiative",
-    type: "Volunteer",
-    category: "jobs",
-    location: "Remote",
-    salary: "Unpaid",
-    posted: "3 days ago",
-    urgent: false,
-    created_at: "2024-01-12T10:00:00Z",
-    updated_at: "2024-01-12T10:00:00Z"
-  },
-  {
-    id: 4,
-    title: "Digital Literacy Training Course",
-    organization: "EdTech Academy",
-    type: "Online Course",
-    category: "fellowship",
-    location: "Online",
-    amount: "Free",
-    posted: "5 days ago",
-    urgent: false,
-    created_at: "2024-01-08T10:00:00Z",
-    updated_at: "2024-01-08T10:00:00Z"
-  }
-];
-
 export const useOpportunities = (selectedCategory: string) => {
   return useQuery({
     queryKey: ['opportunities', selectedCategory],
     queryFn: async () => {
+      let data;
+
       if (!opportunityService) {
-        console.log("Using mock data - backend services not available");
-        return { results: mockOpportunities };
+        console.warn("Backend service not available – fallback to empty array.");
+        return { results: [] };
       }
-      
+
       try {
-        if (selectedCategory === "all") {
-          return await opportunityService.getRecentOpportunities(12);
-        } else {
-          return await opportunityService.getOpportunitiesByCategory(selectedCategory);
-        }
+        data =
+          selectedCategory === "all"
+            ? await opportunityService.getRecentOpportunities(12)
+            : await opportunityService.getOpportunitiesByCategory(selectedCategory);
       } catch (error) {
-        console.error("API call failed, using mock data:", error);
-        return { results: mockOpportunities };
+        console.error("API call failed, fallback:", error);
+        return { results: [] };
       }
+
+      // 🔄 Normalize & map backend fields to expected frontend format
+      const transformed = data.results.map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        organization: item.organization || "Not specified",
+        type: item.opportunity_type || "Other",
+        category: item.category?.slug?.toLowerCase() || "unknown",
+        location: item.location,
+        salary: item.salary || "",
+        amount: item.amount || "",
+        posted: formatPostedDate(item.post_date),
+        urgent: item.urgent || false,
+        created_at: item.created_at || "",
+        updated_at: item.updated_at || ""
+      }));
+
+      return { ...data, results: transformed };
     },
     retry: false,
   });
@@ -146,3 +108,21 @@ export const useDiscussions = () => {
     retry: false,
   });
 };
+
+
+// export const useOpportunityCategories = () => {
+//   return useQuery({
+//     queryKey: ['opportunity-categories'],
+//     queryFn: async () => {
+//       if (!opportunityService) return { results: [] };
+//       try {
+//         const response = await opportunityService.getCategories();
+//         return response.results || response;
+//       } catch (error) {
+//         console.error("Error fetching categories:", error);
+//         return [];
+//       }
+//     },
+//     retry: false,
+//   });
+// };

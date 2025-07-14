@@ -32,7 +32,8 @@ const OpportunitiesSection = ({
   const categories = [
     { id: "all", name: "All Opportunities", icon: Globe },
     { id: "jobs", name: "Jobs", icon: Briefcase },
-    { id: "fellowship", name: "Fellowships & Training", icon: GraduationCap },
+    { id: "fellowship", name: "Fellowships & Training", icon: Globe },
+    { id: "scholarships", name: "Scholarships", icon: GraduationCap },
     { id: "research", name: "Research", icon: BookOpen },
     { id: "awards", name: "Awards & Recognition", icon: AwardIcon }
   ];
