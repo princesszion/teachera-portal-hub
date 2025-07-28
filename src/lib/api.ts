@@ -47,12 +47,37 @@ class ApiClient {
     return this.request<T>(endpoint, { method: 'GET' });
   }
 
-  async post<T>(endpoint: string, data: any): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: 'POST',
+  // async post<T>(endpoint: string, data: any): Promise<T> {
+  //   return this.request<T>(endpoint, {
+  //     method: 'POST',
+  //     body: JSON.stringify(data),
+  //   });
+  // }
+  async post(url: string, data: any): Promise<any> {
+    const response = await fetch(`http://localhost:8000/api${url}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(data),
     });
-  }
+
+    if (!response.ok) {
+      let errorMessage = `HTTP error! status: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        console.error("🔥 API Validation Error:", errorData); // 👈 See which field failed
+        errorMessage += ` | Details: ${JSON.stringify(errorData)}`;
+      } catch (e) {
+        console.error("❌ Could not parse error response");
+      }
+
+      throw new Error(errorMessage);
+    }
+
+    return response.json();
+};
+
 
   async put<T>(endpoint: string, data: any): Promise<T> {
     return this.request<T>(endpoint, {
@@ -68,10 +93,13 @@ class ApiClient {
     });
   }
 
-  async delete<T>(endpoint: string): Promise<T> {
-    return this.request<T>(endpoint, { method: 'DELETE' });
-  }
+async delete<T>(endpoint: string): Promise<T> {
+  return this.request<T>(endpoint, { method: 'DELETE' });
+}
+
 }
 
 export const apiClient = new ApiClient(API_BASE_URL);
 export type { ApiResponse };
+
+  

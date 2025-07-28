@@ -1,4 +1,3 @@
-
 // import { Button } from "@/components/ui/button";
 // import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 // import { Badge } from "@/components/ui/badge";
@@ -13,6 +12,7 @@
 //   Clock
 // } from "lucide-react";
 // import { Opportunity } from "@/types/api";
+// import ExpandableOpportunityCard from "./ui/ExpandableOpportunityCard";
 
 // interface OpportunitiesSectionProps {
 //   opportunities: Opportunity[];
@@ -104,40 +104,22 @@
 //         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
 //           {filteredOpportunities.map((opportunity) => (
 //             <Card key={opportunity.id} className="hover:shadow-lg transition-shadow cursor-pointer">
-//               <CardHeader>
-//                 <div className="flex justify-between items-start mb-2">
-//                   <CardTitle className="text-lg">{opportunity.title}</CardTitle>
-//                   {opportunity.urgent && (
-//                     <Badge variant="destructive" className="text-xs">Urgent</Badge>
-//                   )}
-//                 </div>
-//                 <CardDescription className="text-primary font-medium">
-//                   {opportunity.organization}
-//                 </CardDescription>
-//               </CardHeader>
-//               <CardContent>
-//                 <div className="space-y-2">
-//                   <div className="flex items-center gap-2 text-sm text-gray-600">
-//                     <MapPin className="h-4 w-4" />
-//                     {opportunity.location}
-//                   </div>
-//                   <div className="flex items-center gap-2 text-sm text-gray-600">
-//                     <Briefcase className="h-4 w-4" />
-//                     {opportunity.type}
-//                   </div>
-//                   <div className="flex items-center gap-2 text-sm text-gray-600">
-//                     <Clock className="h-4 w-4" />
-//                     Posted {opportunity.posted}
-//                   </div>
-//                   <div className="text-lg font-semibold text-green-600 mt-3">
-//                     {opportunity.salary || opportunity.amount}
-//                   </div>
-//                 </div>
-//                 <Button className="w-full mt-4" variant="outline">
-//                   View Details <ChevronRight className="h-4 w-4 ml-2" />
-//                 </Button>
-//               </CardContent>
-//             </Card>
+//             <CardHeader>
+//               <div className="flex justify-between items-start mb-2">
+//                 <CardTitle className="text-lg">{opportunity.title}</CardTitle>
+//                 {opportunity.urgent && (
+//                   <Badge variant="destructive" className="text-xs">Urgent</Badge>
+//                 )}
+//               </div>
+//               <CardDescription className="text-primary font-medium">
+//                 {opportunity.organization}
+//               </CardDescription>
+//             </CardHeader>
+
+//             <CardContent>
+//               <ExpandableOpportunityCard opportunity={opportunity} />
+//             </CardContent>
+//           </Card>
 //           ))}
 //         </div>
 
@@ -155,12 +137,10 @@
 
 
 
-
-
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+
 import { 
   BookOpen, 
   Briefcase, 
@@ -173,7 +153,6 @@ import {
 } from "lucide-react";
 import { Opportunity } from "@/types/api";
 import ExpandableOpportunityCard from "./ui/ExpandableOpportunityCard";
-
 interface OpportunitiesSectionProps {
   opportunities: Opportunity[];
   selectedCategory: string;
@@ -181,7 +160,7 @@ interface OpportunitiesSectionProps {
   isLoading: boolean;
   error: any;
 }
-
+import { useEffect, useState } from "react";
 const OpportunitiesSection = ({ 
   opportunities, 
   selectedCategory, 
@@ -189,6 +168,7 @@ const OpportunitiesSection = ({
   isLoading, 
   error 
 }: OpportunitiesSectionProps) => {
+  
   const categories = [
     { id: "all", name: "All Opportunities", icon: Globe },
     { id: "jobs", name: "Jobs", icon: Briefcase },
@@ -197,13 +177,18 @@ const OpportunitiesSection = ({
     { id: "research", name: "Research", icon: BookOpen },
     { id: "awards", name: "Awards & Recognition", icon: AwardIcon }
   ];
-
+  const [visibleCount, setVisibleCount] = useState(6);
   const jobSubcategories = ["Full-time Jobs", "Internships", "Volunteering"];
   const fellowshipSubcategories = ["Undergraduate", "Master's", "PhD", "Post-doctoral", "Online Courses"];
 
   const filteredOpportunities = selectedCategory === "all" 
-    ? opportunities 
-    : opportunities.filter(opp => opp.category === selectedCategory);
+  ? opportunities 
+  : opportunities.filter(opp => opp.category === selectedCategory);
+
+  useEffect(() => {
+    setVisibleCount(3);
+  }, [selectedCategory]);
+  const visibleOpportunities = filteredOpportunities.slice(0, visibleCount);
 
   return (
     <section id="opportunities" className="py-16 bg-gray-50">
@@ -262,7 +247,7 @@ const OpportunitiesSection = ({
 
         {/* Opportunities Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {filteredOpportunities.map((opportunity) => (
+          {visibleOpportunities.map((opportunity) => (
             <Card key={opportunity.id} className="hover:shadow-lg transition-shadow cursor-pointer">
             <CardHeader>
               <div className="flex justify-between items-start mb-2">
@@ -283,11 +268,19 @@ const OpportunitiesSection = ({
           ))}
         </div>
 
-        <div className="text-center">
-          <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/10">
-            See More Opportunities <ChevronRight className="h-4 w-4 ml-2" />
-          </Button>
-        </div>
+        {visibleCount < filteredOpportunities.length && (
+  <div className="text-center">
+    <Button
+      size="lg"
+      variant="outline"
+      className="border-primary text-primary hover:bg-primary/10"
+      onClick={() => setVisibleCount((prev) => prev + 6)}
+    >
+      Load More Opportunities <ChevronRight className="h-4 w-4 ml-2" />
+    </Button>
+  </div>
+)}
+
       </div>
     </section>
   );

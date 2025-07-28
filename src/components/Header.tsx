@@ -13,7 +13,7 @@ const Header = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">TeachEra</h1>
-              <p className="text-sm text-gray-600">Empowering Educators Worldwide</p>
+              <p className="text-sm text-gray-600">Empowering Teachers Worldwide</p>
             </div>
           </div>
           <nav className="hidden md:flex space-x-8">
@@ -21,9 +21,8 @@ const Header = () => {
             <a href="#resources" className="text-gray-700 hover:text-primary transition-colors">Resources</a>
             <a href="#community" className="text-gray-700 hover:text-primary transition-colors">Community</a>
             <a href="#awards" className="text-gray-700 hover:text-primary transition-colors">Awards</a>
-            <a href="/admin" className="text-gray-700 hover:text-primary transition-colors">Admin</a>
           </nav>
-          <Button className="bg-primary hover:bg-primary/90">Join TeachEra</Button>
+          <Button className="bg-primary hover:bg-primary/90"><a href="#community">Join TeachEra</a></Button>
         </div>
       </div>
     </header>

@@ -1,6 +1,8 @@
 
 // TypeScript interfaces for API data models
 
+import { apiClient } from "@/lib/api";
+
 export interface Opportunity {
   id: number;
   title: string;
@@ -31,6 +33,8 @@ export interface User {
 }
 
 export interface Resource {
+  uploader_name: string;
+  file_url: string;
   id: number;
   title: string;
   description: string;
@@ -44,17 +48,22 @@ export interface Resource {
 }
 
 export interface Award {
+  nomination_deadline: string;
+  title: ReactNode;
+  type: ReactNode;
+  description: ReactNode;
   id: number;
-  title: string;
-  type: 'monthly' | 'yearly' | 'special';
-  winner?: User;
-  nominees?: User[];
-  description: string;
-  criteria: string;
-  nomination_deadline?: string;
-  created_at: string;
-  updated_at: string;
+  nominee_name: string;
+  nominee_email?: string;
+  nominee_institution: string;
+  category: string;
+  rationale: string;
+  nominated_by_name: string;
+  nominated_by_email?: string;
+  submitted_at: string;
+  approved: boolean;
 }
+
 
 export interface Feedback {
   id: number;
@@ -108,13 +117,13 @@ export interface CreateResource {
   is_free?: boolean;
 }
 
-export interface CreateAward {
-  title: string;
-  type: 'monthly' | 'yearly' | 'special';
-  description: string;
-  criteria: string;
-  nomination_deadline?: string;
-}
+// export interface CreateAward {
+//   title: string;
+//   type: 'monthly' | 'yearly' | 'special';
+//   description: string;
+//   criteria: string;
+//   nomination_deadline?: string;
+// }
 
 export interface CreateFeedback {
   message: string;
@@ -122,3 +131,16 @@ export interface CreateFeedback {
   category?: string;
   is_public?: boolean;
 }
+export type CreateAward = {
+  nominee_name: string;
+  nominee_email?: string;
+  nominee_institution: string;
+  category: "Teacher of the Month" | "Teacher of the Year" | "Other";
+  rationale: string;
+  nominated_by_name: string;
+  nominated_by_email?: string;
+};
+createNomination: async (data: CreateAward): Promise<any> => {
+  console.log("Submitting nomination:", data);
+  return apiClient.post('/nominations/nominees/', data);
+};

@@ -2,6 +2,7 @@
 import { apiClient } from '@/lib/api';
 import { Feedback, ApiResponse, CreateFeedback, PaginationParams } from '@/types/api';
 
+
 export const feedbackService = {
   // Get all feedback with pagination and filtering
   getFeedback: async (params?: PaginationParams): Promise<ApiResponse<Feedback>> => {
@@ -24,7 +25,7 @@ export const feedbackService = {
 
   // Submit feedback
   submitFeedback: async (data: CreateFeedback): Promise<Feedback> => {
-    return apiClient.post<Feedback>('/feedback/', data);
+    return apiClient.post('/feedback/', data);
   },
 
   // Update feedback
@@ -49,7 +50,7 @@ export const feedbackService = {
 
   // Reply to feedback (if you have nested replies)
   replyToFeedback: async (parentId: number, data: CreateFeedback): Promise<Feedback> => {
-    return apiClient.post<Feedback>(`/feedback/${parentId}/reply/`, data);
+    return apiClient.post(`/feedback/${parentId}/reply/`, data);
   },
 
   // Get recent feedback
