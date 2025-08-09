@@ -2,6 +2,7 @@
 // TypeScript interfaces for API data models
 
 import { apiClient } from "@/lib/api";
+import { ReactNode } from "react";
 
 export interface Opportunity {
   id: number;
@@ -22,14 +23,13 @@ export interface Opportunity {
 }
 
 export interface User {
-  id: number;
-  username: string;
+  name: string;
   email: string;
-  first_name: string;
-  last_name: string;
-  profile_picture?: string;
-  bio?: string;
-  is_verified: boolean;
+  // first_name: string;
+  // last_name: string;
+  // profile_picture?: string;
+  // bio?: string;
+  // is_verified: boolean;
 }
 
 export interface Resource {
@@ -131,6 +131,11 @@ export interface CreateFeedback {
   category?: string;
   is_public?: boolean;
 }
+export interface CreateUser  {
+  name: string;
+  email: string;
+  password: string;
+}
 export type CreateAward = {
   nominee_name: string;
   nominee_email?: string;
@@ -144,3 +149,8 @@ createNomination: async (data: CreateAward): Promise<any> => {
   console.log("Submitting nomination:", data);
   return apiClient.post('/nominations/nominees/', data);
 };
+export interface CreateUser {
+  name: string;
+  email: string;
+  password: string;
+}
