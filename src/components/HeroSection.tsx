@@ -1,7 +1,9 @@
 
 import { Button } from "@/components/ui/button";
-
+import SignupFormModal from "@/components/SignupFormModal";
+import { useState } from "react";
 const HeroSection = () => {
+  const [isModalOpen, setModalOpen] = useState(false);
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto text-center">
@@ -22,10 +24,13 @@ const HeroSection = () => {
             <a href="#opportunities" className="text-white-700 hover:text-primary transition-colors">Explore Opportunities</a>
           </Button>
           <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/10">
-            <a href="#community" className="text-gray-700 hover:text-primary transition-colors">Join Our Community</a>
+            <a href="#community" className="text-gray-700 hover:text-primary transition-colors" onClick={() => setModalOpen(true)}>Join Our Community</a>
           </Button>
         </div>
       </div>
+
+      {/* Signup Modal */}
+      {isModalOpen && <SignupFormModal onClose={() => setModalOpen(false)} />}
     </section>
   );
 };
