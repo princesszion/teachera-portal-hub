@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Opportunity } from "@/types/api";
+import type { Category } from "@/types/api";
 
 import { opportunityService } from "@/services/opportunityService";
 import { resourceService } from "@/services/resourceService";
@@ -18,6 +19,18 @@ function formatPostedDate(dateStr: string) {
   if (diffDays === 1) return "1 day ago";
   return `${diffDays} days ago`;
 }
+
+
+export const useOpportunityCategories = () => {
+  return useQuery({
+    queryKey: ["opportunity-categories"],
+    queryFn: async (): Promise<Category[]> => {
+      const resp = await opportunityService.getCategories(); // ApiResponse<Category>
+      return resp.results ?? []; // <- read results here
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+};
 export const useOpportunities = (selectedCategory: string) => {
   return useQuery({
     queryKey: ['opportunities', selectedCategory],
@@ -40,29 +53,23 @@ export const useOpportunities = (selectedCategory: string) => {
       }
 
       // 🔄 Normalize & map backend fields to expected frontend format
-      const transformed = data.results.map((item: any) => ({
+  const transformed = data.results.map((item: any) => ({
   id: item.id,
   title: item.title,
   organization: item.organization || "Not specified",
-  type: item.type || item.opportunity_type || "Other",   // safer fallback
-  category: item.category?.slug?.toLowerCase() || "unknown",
+  type: item.type || item.opportunity_type || "Other",
+  category: item.category, // ✅ keep { id, name, slug }
   location: item.location,
   description: item.description || "No description provided",
   eligibility: item.eligibility || "No eligibility criteria specified",
-
-  // ✅ Add these
   benefits: item.benefits || "No benefits specified",
   process: item.process || "No application process specified",
-
   deadline: item.deadline || null,
-  salary: item.salary || "",
-  amount: item.amount || "",
   posted: formatPostedDate(item.post_date),
   urgent: item.urgent || false,
   created_at: item.created_at || "",
-  updated_at: item.updated_at || ""
+  updated_at: item.updated_at || "",
 }));
-
       return { ...data, results: transformed };
     },
     retry: false,

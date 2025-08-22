@@ -1,6 +1,6 @@
 
 import { apiClient } from '@/lib/api';
-import { Opportunity, ApiResponse, PaginationParams, CreateOpportunity } from '@/types/api';
+import { Opportunity, ApiResponse, PaginationParams, CreateOpportunity, Category } from '@/types/api';
 
 export const opportunityService = {
   // Get all opportunities with pagination and filtering
@@ -15,6 +15,10 @@ export const opportunityService = {
 
     const endpoint = `/opportunities/opportunities/${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
     return apiClient.get<ApiResponse<Opportunity>>(endpoint);
+  },
+  getCategories: async (): Promise<ApiResponse<Category>> => {
+    // apiClient.get<T>() already returns T, so don't use `.data`
+    return apiClient.get<ApiResponse<Category>>("/opportunities/categories/");
   },
 
   // Get a single opportunity by ID
