@@ -24,7 +24,7 @@ export const opportunityService = {
 
   // Create a new opportunity
   createOpportunity: async (data: CreateOpportunity): Promise<Opportunity> => {
-    return apiClient.post<Opportunity>('/opportunities/opportunities/', data);
+    return apiClient.post('/opportunities/opportunities/', data);
   },
 
   // Update an opportunity

@@ -9,7 +9,6 @@ interface Props {
 
 const ExpandableOpportunityCard = ({ opportunity }: Props) => {
   const [expanded, setExpanded] = useState(false);
-
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -20,23 +19,15 @@ const ExpandableOpportunityCard = ({ opportunity }: Props) => {
         <Briefcase className="h-4 w-4" />
         {opportunity.type}
       </div>
-      <div className="flex items-center gap-2 text-sm text-gray-600">
-        <Clock className="h-4 w-4" />
-        Posted {opportunity.posted}
-      </div>
-
-      <div className="text-lg font-semibold text-green-600 mt-3">
-        {opportunity.salary || opportunity.amount}
-      </div>
-
       {expanded && (
         <div className="text-sm text-gray-700 mt-2 space-y-2">
-          <div><strong>Description:</strong> {opportunity.description}</div>
-          {/* <div><strong>Eligibility:</strong> {opportunity.eligibility}</div> */}
-          <div><strong>Deadline:</strong> {opportunity.deadline}</div>
-          {/* <div><strong>How to Apply:</strong> {opportunity.how_to_apply}</div> */}
-          {/* Add more fields as needed */}
-        </div>
+    <div><strong>Description:</strong> {opportunity.description}</div>
+    <div><strong>Eligibility:</strong> {opportunity.eligibility}</div>
+    <div><strong>Benefits:</strong> {opportunity.benefits}</div>
+    <div><strong>Application Process:</strong> {opportunity.process}</div>
+    <div><strong>Deadline:</strong> {new Date(opportunity.deadline).toLocaleDateString()}</div>
+    <div><strong>Location:</strong> {opportunity.location}</div>
+  </div>
       )}
 
       <Button
@@ -56,6 +47,6 @@ const ExpandableOpportunityCard = ({ opportunity }: Props) => {
       </Button>
     </div>
   );
+  
 };
-
 export default ExpandableOpportunityCard;

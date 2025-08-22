@@ -147,12 +147,12 @@ import {
   GraduationCap, 
   Award as AwardIcon, 
   Globe,
-  ChevronRight,
-  MapPin,
-  Clock
+  ChevronRight
 } from "lucide-react";
 import { Opportunity } from "@/types/api";
 import ExpandableOpportunityCard from "./ui/ExpandableOpportunityCard";
+import { useEffect, useState } from "react";
+
 interface OpportunitiesSectionProps {
   opportunities: Opportunity[];
   selectedCategory: string;
@@ -160,7 +160,7 @@ interface OpportunitiesSectionProps {
   isLoading: boolean;
   error: any;
 }
-import { useEffect, useState } from "react";
+
 const OpportunitiesSection = ({ 
   opportunities, 
   selectedCategory, 
@@ -177,17 +177,21 @@ const OpportunitiesSection = ({
     { id: "research", name: "Research", icon: BookOpen },
     { id: "awards", name: "Awards & Recognition", icon: AwardIcon }
   ];
+
   const [visibleCount, setVisibleCount] = useState(6);
+
   const jobSubcategories = ["Full-time Jobs", "Internships", "Volunteering"];
   const fellowshipSubcategories = ["Undergraduate", "Master's", "PhD", "Post-doctoral", "Online Courses"];
 
+  // ✅ Use category.slug instead of id
   const filteredOpportunities = selectedCategory === "all" 
-  ? opportunities 
-  : opportunities.filter(opp => opp.category === selectedCategory);
+    ? opportunities 
+    : opportunities.filter(opp => opp.category?.slug === selectedCategory);
 
   useEffect(() => {
     setVisibleCount(3);
   }, [selectedCategory]);
+
   const visibleOpportunities = filteredOpportunities.slice(0, visibleCount);
 
   return (
@@ -249,38 +253,36 @@ const OpportunitiesSection = ({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {visibleOpportunities.map((opportunity) => (
             <Card key={opportunity.id} className="hover:shadow-lg transition-shadow cursor-pointer">
-            <CardHeader>
-              <div className="flex justify-between items-start mb-2">
-                <CardTitle className="text-lg">{opportunity.title}</CardTitle>
-                {opportunity.urgent && (
-                  <Badge variant="destructive" className="text-xs">Urgent</Badge>
-                )}
-              </div>
-              <CardDescription className="text-primary font-medium">
-                {opportunity.organization}
-              </CardDescription>
-            </CardHeader>
-
-            <CardContent>
-              <ExpandableOpportunityCard opportunity={opportunity} />
-            </CardContent>
-          </Card>
+              <CardHeader>
+                <div className="flex justify-between items-start mb-2">
+                  <CardTitle className="text-lg">{opportunity.title}</CardTitle>
+                  {!opportunity.is_active && (
+                    <Badge variant="secondary" className="text-xs">Closed</Badge>
+                  )}
+                </div>
+                <CardDescription className="text-primary font-medium">
+                  {opportunity.organization}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ExpandableOpportunityCard opportunity={opportunity} />
+              </CardContent>
+            </Card>
           ))}
         </div>
 
         {visibleCount < filteredOpportunities.length && (
-  <div className="text-center">
-    <Button
-      size="lg"
-      variant="outline"
-      className="border-primary text-primary hover:bg-primary/10"
-      onClick={() => setVisibleCount((prev) => prev + 6)}
-    >
-      Load More Opportunities <ChevronRight className="h-4 w-4 ml-2" />
-    </Button>
-  </div>
-)}
-
+          <div className="text-center">
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-primary text-primary hover:bg-primary/10"
+              onClick={() => setVisibleCount((prev) => prev + 6)}
+            >
+              Load More Opportunities <ChevronRight className="h-4 w-4 ml-2" />
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -41,22 +41,27 @@ export const useOpportunities = (selectedCategory: string) => {
 
       // 🔄 Normalize & map backend fields to expected frontend format
       const transformed = data.results.map((item: any) => ({
-        id: item.id,
-        title: item.title,
-        organization: item.organization || "Not specified",
-        type: item.opportunity_type || "Other",
-        category: item.category?.slug?.toLowerCase() || "unknown",
-        location: item.location,
-        description: item.description || "No description provided",
-        eligibility: item.eligibility || "No eligibility criteria specified",
-        deadline: item.deadline || "No deadline specified",
-        salary: item.salary || "",
-        amount: item.amount || "",
-        posted: formatPostedDate(item.post_date),
-        urgent: item.urgent || false,
-        created_at: item.created_at || "",
-        updated_at: item.updated_at || ""
-      }));
+  id: item.id,
+  title: item.title,
+  organization: item.organization || "Not specified",
+  type: item.type || item.opportunity_type || "Other",   // safer fallback
+  category: item.category?.slug?.toLowerCase() || "unknown",
+  location: item.location,
+  description: item.description || "No description provided",
+  eligibility: item.eligibility || "No eligibility criteria specified",
+
+  // ✅ Add these
+  benefits: item.benefits || "No benefits specified",
+  process: item.process || "No application process specified",
+
+  deadline: item.deadline || null,
+  salary: item.salary || "",
+  amount: item.amount || "",
+  posted: formatPostedDate(item.post_date),
+  urgent: item.urgent || false,
+  created_at: item.created_at || "",
+  updated_at: item.updated_at || ""
+}));
 
       return { ...data, results: transformed };
     },

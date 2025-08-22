@@ -4,23 +4,44 @@
 import { apiClient } from "@/lib/api";
 import { ReactNode } from "react";
 
+// export interface Opportunity {
+//   id: number;
+//   title: string;
+//   organization: string;
+//   type: string;
+//   category: 'jobs' | 'fellowship' | 'research' | 'awards';
+//   location: string;
+//   eligibility?: string;
+//   benefits?: string;
+//   description?: string;
+//   process?: string;
+//   posted: string;
+//   deadline?: string;
+//   urgent: boolean;
+//   created_at: string;
+//   updated_at: string;
+// }
 export interface Opportunity {
+  type: string;
+  created_at: any;
   id: number;
   title: string;
-  organization: string;
-  type: string;
-  category: 'jobs' | 'fellowship' | 'research' | 'awards';
-  location: string;
-  salary?: string;
-  amount?: string;
   description?: string;
-  requirements?: string;
-  posted: string;
+  organization: string;
   deadline?: string;
-  urgent: boolean;
-  created_at: string;
-  updated_at: string;
+  post_date: string;
+  category: {
+    id: number;
+    name: string;
+    slug: string;
+  };
+  eligibility?: string;
+  benefits?: string;
+  process?: string;
+  location: string;
+  is_active: boolean;
 }
+
 
 export interface User {
   name: string;
@@ -99,10 +120,10 @@ export interface CreateOpportunity {
   type: string;
   category: 'jobs' | 'fellowship' | 'research' | 'awards';
   location: string;
-  salary?: string;
-  amount?: string;
+  eligibility?: string;
+  benefits?: string;
   description?: string;
-  requirements?: string;
+  process?: string;
   deadline?: string;
   urgent?: boolean;
 }
