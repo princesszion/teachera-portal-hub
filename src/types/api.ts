@@ -22,6 +22,7 @@ import { ReactNode } from "react";
 //   updated_at: string;
 // }
 export interface Opportunity {
+  is_closed: boolean;
   type: string;
   created_at: any;
   id: number;
@@ -87,6 +88,7 @@ export interface Award {
   nominated_by_email?: string;
   submitted_at: string;
   approved: boolean;
+  photo?: string;
 }
 
 

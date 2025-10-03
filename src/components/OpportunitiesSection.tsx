@@ -126,9 +126,13 @@ const OpportunitiesSection = ({
               <CardHeader>
                 <div className="flex justify-between items-start mb-2">
                   <CardTitle className="text-lg">{opportunity.title}</CardTitle>
-                  {!opportunity.is_active && (
-                    <Badge variant="secondary" className="text-xs">Closed</Badge>
-                  )}
+                  {(() => {
+                    console.log("Opportunity:", opportunity.title, "Closed:", opportunity.is_closed);
+                    return opportunity.is_closed ? (
+                      <Badge variant="secondary" className="text-xs">Closed</Badge>
+                    ) : null;
+                  })()}
+
                 </div>
                 <CardDescription className="text-primary font-medium">
                   {opportunity.organization}

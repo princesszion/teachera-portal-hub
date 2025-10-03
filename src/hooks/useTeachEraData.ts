@@ -60,6 +60,7 @@ export const useOpportunities = (selectedCategory: string) => {
   type: item.type || item.opportunity_type || "Other",
   category: item.category, // ✅ keep { id, name, slug }
   location: item.location,
+  is_closed: item.is_closed,
   description: item.description || "No description provided",
   eligibility: item.eligibility || "No eligibility criteria specified",
   benefits: item.benefits || "No benefits specified",

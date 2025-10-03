@@ -113,66 +113,80 @@ export default function AwardsSection() {
                 </div>
               </div>
             </CardHeader>
-              <CardContent>
-                {currentWinner ? (
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
-                    <div>
-                      <div className="font-semibold">{currentWinner.nominee_name}</div>
-                      <div className="text-sm text-gray-600">{currentWinner.nominee_institution}</div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-sm text-gray-500 mb-4">No current winner</div>
-                )}
-                <Button
-                  className="w-full bg-yellow hover:bg-yellow/90 text-yellow-foreground"
-                  onClick={() => openModalFor("Teacher of the Month")}
-                >
-                  Nominate a Teacher
-                </Button>
-              </CardContent>
-          </Card>
-
-          {/* Teacher of the Year */}
-          <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
-            <CardHeader>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                  <Star className="h-6 w-6 text-purple-600" />
+            <CardContent className="text-center">
+              {currentWinner ? (
+                <div className="flex flex-col items-center mb-4">
+                  {currentWinner.photo && (
+                    <img
+                      src={currentWinner.photo}
+                      alt={currentWinner.nominee_name}
+                      className="w-32 h-32 object-cover rounded-full mb-3 border-4 border-yellow-200"
+                    />
+                  )}
+                  <div className="font-semibold text-lg">{currentWinner.nominee_name}</div>
+                  <div className="text-sm text-gray-600">{currentWinner.nominee_institution}</div>
                 </div>
-                <div>
-                  <CardTitle className="text-purple-800">Teacher of the Year</CardTitle>
-                  <CardDescription>Annual recognition for exceptional educators</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-              <CardContent>
-                {currentWinnerYear ? (
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
-                    <div>
-                      <div className="font-semibold">{currentWinnerYear.nominee_name}</div>
-                      <div className="text-sm text-gray-600">{currentWinnerYear.nominee_institution}</div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-sm text-gray-500 mb-4">No current winner</div>
-                )}
-              </CardContent>
-            <CardContent>
-              <div className="text-center mb-4">
-                <div className="text-lg font-semibold">Nominations Open</div>
-                <div className="text-sm text-gray-600">Submit your nomination by March 31st</div>
-              </div>
+              ) : (
+                <div className="text-sm text-gray-500 mb-4">No current winner</div>
+              )}
               <Button
-                className="w-full bg-purple-600 hover:bg-purple-700"
-                onClick={() => openModalFor("Teacher of the Year")}
+                className="w-full bg-yellow hover:bg-yellow/90 text-yellow-foreground"
+                onClick={() => openModalFor("Teacher of the Month")}
               >
-                Submit Nomination
+                Nominate a Teacher
               </Button>
             </CardContent>
           </Card>
+
+
+          {/* Teacher of the Year */}
+          <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
+          <CardHeader>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                <Star className="h-6 w-6 text-purple-600" />
+              </div>
+              <div>
+                <CardTitle className="text-purple-800">Teacher of the Year</CardTitle>
+                <CardDescription>Annual recognition for exceptional educators</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+
+          {/* Winner Section */}
+          <CardContent className="text-center">
+            {currentWinnerYear ? (
+              <div className="flex flex-col items-center mb-4">
+                {currentWinnerYear.photo && (
+                  <img
+                    src={currentWinnerYear.photo}
+                    alt={currentWinnerYear.nominee_name}
+                    className="w-32 h-32 object-cover rounded-full mb-3 border-4 border-purple-200"
+                  />
+                )}
+                <div className="font-semibold text-lg">{currentWinnerYear.nominee_name}</div>
+                <div className="text-sm text-gray-600">{currentWinnerYear.nominee_institution}</div>
+              </div>
+            ) : (
+              <div className="text-sm text-gray-500 mb-4">No current winner</div>
+            )}
+          </CardContent>
+
+  {/* Nomination Section */}
+  <CardContent>
+    <div className="text-center mb-4">
+      <div className="text-lg font-semibold">Nominations Open</div>
+      <div className="text-sm text-gray-600">Submit your nomination by March 31st</div>
+    </div>
+    <Button
+      className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+      onClick={() => openModalFor("Teacher of the Year")}
+    >
+      Submit Nomination
+    </Button>
+  </CardContent>
+</Card>
+
         </div>
 
         <NominationFormModal
