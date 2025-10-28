@@ -124,21 +124,3 @@ export const useDiscussions = () => {
     retry: false,
   });
 };
-
-
-// export const useOpportunityCategories = () => {
-//   return useQuery({
-//     queryKey: ['opportunity-categories'],
-//     queryFn: async () => {
-//       if (!opportunityService) return { results: [] };
-//       try {
-//         const response = await opportunityService.getCategories();
-//         return response.results || response;
-//       } catch (error) {
-//         console.error("Error fetching categories:", error);
-//         return [];
-//       }
-//     },
-//     retry: false,
-//   });
-// };

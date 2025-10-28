@@ -22,6 +22,7 @@ import { ReactNode } from "react";
 //   updated_at: string;
 // }
 export interface Opportunity {
+  share_url: any;
   is_closed: boolean;
   type: string;
   created_at: any;
